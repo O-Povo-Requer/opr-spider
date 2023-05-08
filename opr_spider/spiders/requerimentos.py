@@ -1,5 +1,4 @@
-from pathlib import Path
-
+import re
 import scrapy
 
 class RequerimentosSpider(scrapy.Spider):
@@ -12,7 +11,9 @@ class RequerimentosSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        page = response.url.split("=")[-1]
-        filename = f"requerimentos-{page}.html"
-        Path(filename).write_bytes(response.body)
-        self.log(f"Saved file {filename}")
+        regex=r"(https:\/\/cmbelem\.pb\.gov\.br\/public\/portal\/requerimentos\/geral\/(\w*-?)+)"
+
+        for url in [t[0] for t in re.findall(regex, response.body.decode("utf-8"))]:
+            yield {
+                'url': url
+            }
