@@ -1,5 +1,6 @@
 import scrapy
 import csv
+import re
 
 class InformacoesSpider(scrapy.Spider):
     name = "informacoes"
@@ -13,9 +14,14 @@ class InformacoesSpider(scrapy.Spider):
 
     def parse(self, response):
         yield {
-            'titulo': self.get_titulo(response)
+            'titulo': self.get_titulo(response),
+            'descricao': self.get_descricao(response)
         }
 
     def get_titulo(self, response):
         tag = response.xpath("//title/text()")
         return tag.get().split("|")[0].strip()
+
+    def get_descricao(self, response):
+        tag = response.xpath('//p[@class="MsoNormal"]//text()')
+        return re.sub(r"\r?\n", " ", " ".join(tag.getall()))
