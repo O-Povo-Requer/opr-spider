@@ -18,4 +18,4 @@ class InformacoesSpider(scrapy.Spider):
 
     def get_titulo(self, response):
         tag = response.xpath("//title/text()")
-        return tag.get().split(" | ")[0]
+        return tag.get().split("|")[0].strip()
